@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
     <title>Happy Birthday Pratu</title>
 
     <link
@@ -23,20 +23,39 @@
             --ink: #3b2f25;
             --shadow: rgba(0, 0, 0, 0.22);
             --black: #121212;
+            --danger: #b42318;
+            --ok: #027a48;
+        }
+
+        html {
+            height: 100%;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            overflow-x: hidden;
         }
 
         body {
             margin: 0;
-            min-height: 100vh;
+            min-height: 100svh;
             font-family: Poppins, sans-serif;
             background: linear-gradient(135deg, var(--champagne), var(--champagne2));
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+
+            /* iOS alignment/keyboard-friendly defaults */
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding:
+                calc(14px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));
         }
 
-        /* Optional local decor images */
+        @supports (height: 100dvh) {
+            body {
+                min-height: 100dvh;
+            }
+        }
+
         .decor-top,
         .decor-bottom {
             position: fixed;
@@ -56,7 +75,6 @@
             bottom: 0;
         }
 
-        /* Ambient sparkle dust */
         .dust {
             position: fixed;
             inset: 0;
@@ -84,7 +102,6 @@
             }
         }
 
-        /* Continuous big gold/black confetti */
         canvas#bgConfetti {
             position: fixed;
             inset: 0;
@@ -93,7 +110,6 @@
             opacity: .9;
         }
 
-        /* Burst confetti canvas */
         canvas#burst {
             position: fixed;
             inset: 0;
@@ -113,9 +129,24 @@
             backdrop-filter: blur(8px);
             transform-origin: center;
             overflow: hidden;
+
+            /* Mobile: keep the card aligned and scrollable within the viewport */
+            max-height: calc(100svh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
         }
 
-        /* Lively slide transitions */
+        @supports (height: 100dvh) {
+            .container {
+                max-height: calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            }
+        }
+
+        /* Allow vertical scroll inside the card when content grows on iOS */
+        .container {
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+
         .t-pop {
             animation: tPop .65s cubic-bezier(.2, .9, .2, 1) both;
         }
@@ -202,7 +233,6 @@
             z-index: 2;
         }
 
-        /* TEXT BOX */
         .message-wrap {
             margin-top: 18px;
             border-radius: 22px;
@@ -210,28 +240,26 @@
             position: relative;
             z-index: 2;
             overflow: hidden;
-
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(246, 233, 235, 0.82));
             border: 1px solid rgba(182, 139, 58, 0.22);
             box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
-
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
         }
 
-        /* Subtle moving balloons inside the message box (no gifs) */
         .message-deco {
             position: absolute;
             inset: 0;
             pointer-events: none;
             z-index: 0;
             opacity: .28;
-            filter: blur(.0px);
         }
 
+        /* Fix: avoid transform overrides that can misalign on mobile */
         .b {
+            --s: 1;
             position: absolute;
             bottom: -28%;
             width: 28px;
@@ -253,53 +281,52 @@
             transform: translateX(-50%);
         }
 
-        /* a few different sizes/positions/speeds */
         .b1 {
             left: 10%;
             animation-duration: 7.8s;
-            transform: scale(.85);
+            --s: .85;
         }
 
         .b2 {
             left: 24%;
             animation-duration: 9.6s;
-            transform: scale(.65);
+            --s: .65;
             opacity: .22;
         }
 
         .b3 {
             left: 42%;
             animation-duration: 8.9s;
-            transform: scale(.75);
+            --s: .75;
         }
 
         .b4 {
             left: 63%;
             animation-duration: 10.4s;
-            transform: scale(.55);
+            --s: .55;
             opacity: .20;
         }
 
         .b5 {
             left: 78%;
             animation-duration: 8.2s;
-            transform: scale(.70);
+            --s: .70;
         }
 
         .b6 {
             left: 90%;
             animation-duration: 11.2s;
-            transform: scale(.50);
+            --s: .50;
             opacity: .18;
         }
 
         @keyframes floatUp {
             from {
-                transform: translateY(0) scale(var(--s, 1));
+                transform: translateY(0) scale(var(--s));
             }
 
             to {
-                transform: translateY(-160%) scale(var(--s, 1));
+                transform: translateY(-160%) scale(var(--s));
             }
         }
 
@@ -316,7 +343,6 @@
             overflow-wrap: anywhere;
         }
 
-        /* message gif area (kept elegant + responsive) */
         .message-gif {
             display: none;
             margin: 14px auto 0;
@@ -341,7 +367,6 @@
             object-fit: cover;
         }
 
-        /* Stylish buttons */
         .controls {
             margin-top: 20px;
             display: flex;
@@ -350,6 +375,7 @@
             flex-wrap: wrap;
             position: relative;
             z-index: 2;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .btn {
@@ -366,6 +392,9 @@
             align-items: center;
             gap: 10px;
             user-select: none;
+            min-height: 44px;
+            /* iOS tap target */
+            touch-action: manipulation;
         }
 
         .btn-primary {
@@ -417,9 +446,9 @@
             place-items: center;
             border-radius: 999px;
             background: rgba(255, 255, 255, 0.22);
+            flex: 0 0 auto;
         }
 
-        /* Master slide */
         .master-slide {
             background: linear-gradient(135deg, #0f1b2d, #1b2f52, #2a3f6f);
             color: #fff;
@@ -431,7 +460,8 @@
             content: "";
             position: absolute;
             inset: -2px;
-            background: radial-gradient(1000px 420px at 20% 10%, rgba(231, 196, 106, 0.24), transparent 60%),
+            background:
+                radial-gradient(1000px 420px at 20% 10%, rgba(231, 196, 106, 0.24), transparent 60%),
                 radial-gradient(900px 380px at 85% 85%, rgba(246, 233, 235, 0.16), transparent 60%);
             pointer-events: none;
         }
@@ -521,7 +551,6 @@
             display: block;
         }
 
-        /* Candles: 3 big + 4 small */
         .candles {
             display: none;
             margin-top: 2px;
@@ -612,7 +641,6 @@
             display: block;
         }
 
-        /* His photo bigger + no cropping */
         .his-photo-wrap {
             display: none;
             margin-top: 10px;
@@ -664,7 +692,6 @@
             }
         }
 
-        /* Final slide (no title at top) */
         .final-slide {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(246, 233, 235, 0.98));
         }
@@ -688,7 +715,236 @@
             text-align: center;
         }
 
-        /* Mobile base */
+        /* =========================
+       LANDING (PASSWORD) OVERLAY
+       ========================= */
+        .gate {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: grid;
+            place-items: center;
+            padding:
+                calc(18px + env(safe-area-inset-top)) calc(18px + env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) calc(18px + env(safe-area-inset-left));
+            background:
+                radial-gradient(900px 380px at 20% 10%, rgba(231, 196, 106, 0.18), transparent 60%),
+                radial-gradient(900px 380px at 85% 85%, rgba(246, 233, 235, 0.18), transparent 60%),
+                linear-gradient(135deg, rgba(15, 27, 45, 0.92), rgba(27, 47, 82, 0.92));
+            backdrop-filter: blur(10px);
+
+            /* iOS keyboard: allow overlay to scroll instead of cropping */
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+
+        .gate-card {
+            width: min(92vw, 560px);
+            border-radius: 26px;
+            padding: 26px 18px 22px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            position: relative;
+            overflow: hidden;
+
+            max-height: calc(100svh - 36px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @supports (height: 100dvh) {
+            .gate-card {
+                max-height: calc(100dvh - 36px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            }
+        }
+
+        .gate-card:before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            background:
+                radial-gradient(700px 320px at 20% 0%, rgba(231, 196, 106, 0.18), transparent 55%),
+                radial-gradient(700px 320px at 90% 100%, rgba(182, 139, 58, 0.10), transparent 55%);
+            pointer-events: none;
+        }
+
+        .gate-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            margin: 0;
+            color: #1b2f52;
+            position: relative;
+            z-index: 1;
+            letter-spacing: .3px;
+        }
+
+        .gate-sub {
+            margin: 8px 0 0;
+            font-size: 14px;
+            color: rgba(27, 47, 82, 0.82);
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .gate-media {
+            margin-top: 14px;
+            display: grid;
+            gap: 10px;
+            justify-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .gate-media img {
+            width: min(420px, 100%);
+            border-radius: 18px;
+            border: 1px solid rgba(182, 139, 58, 0.20);
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .gate-form {
+            margin-top: 14px;
+            display: grid;
+            gap: 10px;
+            position: relative;
+            z-index: 1;
+            justify-items: center;
+        }
+
+        .gate-input {
+            width: min(360px, 100%);
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(27, 47, 82, 0.18);
+            outline: none;
+            font-size: 16px;
+            /* prevents iOS zoom */
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .gate-input:focus {
+            border-color: rgba(182, 139, 58, 0.55);
+            box-shadow: 0 10px 26px rgba(182, 139, 58, 0.16);
+        }
+
+        .helptext {
+            margin-top: -4px;
+            font-size: 12px;
+            color: rgba(27, 47, 82, 0.72);
+            width: min(420px, 100%);
+            text-align: center;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+        }
+
+        .gate-meta {
+            width: min(420px, 100%);
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+            font-size: 12px;
+            opacity: .94;
+            position: relative;
+            z-index: 1;
+            align-items: center;
+        }
+
+        .pill {
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(27, 47, 82, 0.16);
+            background: rgba(255, 255, 255, 0.75);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .attempt-dots {
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(27, 47, 82, 0.28);
+            box-shadow: inset 0 0 0 1px rgba(27, 47, 82, 0.18);
+        }
+
+        .dot.on {
+            background: linear-gradient(135deg, var(--gold2), var(--gold));
+            box-shadow: 0 10px 18px rgba(182, 139, 58, 0.18);
+        }
+
+        .gate-status {
+            margin-top: 6px;
+            min-height: 22px;
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+            padding: 0 2px;
+            width: min(420px, 100%);
+            text-align: center;
+        }
+
+        .gate-status.ok {
+            color: var(--ok);
+            font-weight: 700;
+        }
+
+        .gate-status.bad {
+            color: var(--danger);
+            font-weight: 700;
+        }
+
+        .gate-status.dim {
+            color: rgba(27, 47, 82, 0.75);
+        }
+
+        .gate-actions {
+            margin-top: 6px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-wide {
+            padding-left: 22px;
+            padding-right: 22px;
+        }
+
+        .mini-note {
+            margin-top: 10px;
+            font-size: 12px;
+            color: rgba(27, 47, 82, 0.70);
+            position: relative;
+            z-index: 1;
+            line-height: 1.6;
+            text-align: center;
+            width: min(420px, 100%);
+        }
+
+        .lock-timer {
+            font-variant-numeric: tabular-nums;
+            font-weight: 800;
+            color: rgba(27, 47, 82, 0.90);
+        }
+
         @media (max-width: 480px) {
             .container {
                 padding: 30px 18px;
@@ -729,22 +985,21 @@
             }
         }
 
-        /* ===========================
-           MOBILE FIX: MASTER SLIDE FIT (NO OVERLAY)
-           Master content scrolls, controls stay below content
-           =========================== */
         @media (max-width: 480px) {
-
-            /* Make the card a fixed-height layout on mobile */
             .container.master-slide {
-                height: 92vh;
+                height: 92svh;
                 overflow: hidden;
                 display: flex;
                 flex-direction: column;
                 padding-bottom: calc(16px + env(safe-area-inset-bottom));
             }
 
-            /* Make only the master content area scrollable */
+            @supports (height: 100dvh) {
+                .container.master-slide {
+                    height: 92dvh;
+                }
+            }
+
             .container.master-slide #masterArea {
                 flex: 1 1 auto;
                 overflow-y: auto;
@@ -752,7 +1007,6 @@
                 padding-bottom: 10px;
             }
 
-            /* Controls are normal flow at bottom (no overlap) */
             .container.master-slide .controls {
                 flex: 0 0 auto;
                 position: relative;
@@ -761,7 +1015,6 @@
                 background: transparent;
             }
 
-            /* Slightly reduce master elements to avoid excessive scroll */
             .container.master-slide .gift-area {
                 gap: 10px;
             }
@@ -791,7 +1044,6 @@
 
 <body>
 
-    <!-- Optional local assets -->
     <img src="birthday-decor-top.png" class="decor-top" alt="" />
     <img src="birthday-decor-bottom.png" class="decor-bottom" alt="" />
     <div class="dust" aria-hidden="true"></div>
@@ -799,18 +1051,77 @@
     <canvas id="bgConfetti"></canvas>
     <canvas id="burst"></canvas>
 
-    <audio id="bgMusic" autoplay loop>
+    <!-- PASSWORD GATE (SINGLE IMAGE) -->
+    <div class="gate" id="gate">
+        <div class="gate-card t-pop">
+            <h2 class="gate-title">Security Credentials Required</h2>
+            <p class="gate-sub">
+                Authorized user: Birthday Boy. Enter the code to access the experience.
+            </p>
+
+            <div class="gate-media">
+                <img id="gateMedia" src="gate-hero.gif" alt="Gate media" />
+            </div>
+
+            <div class="gate-form">
+                <input class="gate-input" id="gateInput" type="password" inputmode="numeric"
+                    placeholder="Enter code (numbers only)" autocomplete="off" />
+                <div class="helptext" id="gateHelp">Help: It is 8 digits.</div>
+
+                <div class="gate-meta">
+                    <div class="pill" id="attemptPill">
+                        Attempts: <span id="attemptCount">3</span>
+                        <span class="attempt-dots" id="attemptDots" aria-hidden="true"></span>
+                    </div>
+                    <div class="pill" id="hintPill">Clue: It’s a combination of you and me.</div>
+                </div>
+
+                <div class="gate-status dim" id="gateStatus">
+                    Start with the “you” part first. Then add the “me” part. Clean. Simple. Effective.
+                </div>
+
+                <div class="gate-actions">
+                    <button class="btn btn-primary btn-wide" id="gateUnlockBtn">
+                        <span class="btn-icon">🔓</span>
+                        Unlock
+                    </button>
+                </div>
+
+                <div class="mini-note" id="lockNote" style="display:none;">
+                    Locked for <span class="lock-timer" id="lockTimer">01:00</span>.
+                    <br />
+                    Fast-track available: “kiss tax” + Owner Key.
+                    <div style="margin-top:10px; display:grid; gap:10px; justify-items:center;">
+                        <input class="gate-input" id="ownerKeyInput" type="password" inputmode="numeric"
+                            placeholder="Owner Key" autocomplete="off" style="max-width:280px;" />
+                        <button class="btn btn-primary btn-wide" id="ownerBypassBtn">
+                            <span class="btn-icon">💋</span>
+                            Pay Kiss Tax + Bypass
+                        </button>
+                        <div class="gate-status dim" id="ownerStatus" style="min-height:18px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main music: MUST start only after unlocking -->
+    <audio id="bgMusic" loop preload="auto">
         <source src="Vennilave.mp3" type="audio/mpeg">
     </audio>
 
-    <audio id="birthdayMusic">
+    <audio id="birthdayMusic" preload="auto">
         <source src="happy-birthday.mp3" type="audio/mpeg">
     </audio>
 
-    <div class="container t-pop" id="card">
+    <!-- Security screen music: plays until unlocked -->
+    <audio id="securityMusic" loop preload="auto">
+        <source src="security-credentials.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container t-pop" id="card" style="display:none;">
         <h1 id="title">Unnodu Naan</h1>
 
-        <!-- Standard message area -->
         <div id="standardArea">
             <div class="message-wrap" id="msgWrap">
                 <div class="message-deco" aria-hidden="true">
@@ -824,13 +1135,11 @@
                 <p class="message" id="message">Press Start</p>
             </div>
 
-            <!-- GIF holder for specific slides -->
             <div class="message-gif" id="messageGifWrap" aria-hidden="true">
                 <img id="messageGif" src="" alt="" />
             </div>
         </div>
 
-        <!-- MASTER SLIDE AREA -->
         <div id="masterArea" style="display:none;">
             <div class="master-sub">A LITTLE SURPRISE FOR YOU</div>
 
@@ -840,7 +1149,6 @@
                 <img src="gift.png" class="gift-box" id="giftBox" alt="Gift box" />
 
                 <div class="candles" id="candles">
-                    <!-- 3 BIG -->
                     <div class="candle big">
                         <div class="flame"></div>
                     </div>
@@ -850,7 +1158,7 @@
                     <div class="candle big">
                         <div class="flame"></div>
                     </div>
-                    <!-- 4 SMALL -->
+
                     <div class="candle small">
                         <div class="flame"></div>
                     </div>
@@ -879,7 +1187,6 @@
             </div>
         </div>
 
-        <!-- FINAL SLIDE AREA (no top heading) -->
         <div id="finalArea" style="display:none;">
             <div class="message-wrap" style="margin-top:16px;">
                 <div class="message-deco" aria-hidden="true">
@@ -923,27 +1230,310 @@
     </div>
 
     <script>
+        // =========================
+        // PASSWORD GATE CONFIG
+        // =========================
+        const HIS_DDMM = "2002";
+        const CAR_NO = "9407";
+        const PASSWORD = `${HIS_DDMM}${CAR_NO}`; // 20029407 (8 digits)
+        const OWNER_KEY = "5005";
+
+        const MAX_ATTEMPTS = 3;
+        const LOCK_MS = 1 * 60 * 1000;
+
+        const gate = document.getElementById("gate");
+        const card = document.getElementById("card");
+
+        const gateInput = document.getElementById("gateInput");
+        const gateUnlockBtn = document.getElementById("gateUnlockBtn");
+
+        const attemptCount = document.getElementById("attemptCount");
+        const attemptDots = document.getElementById("attemptDots");
+
+        const hintPill = document.getElementById("hintPill");
+        const gateStatus = document.getElementById("gateStatus");
+
+        const lockNote = document.getElementById("lockNote");
+        const lockTimer = document.getElementById("lockTimer");
+
+        const ownerKeyInput = document.getElementById("ownerKeyInput");
+        const ownerBypassBtn = document.getElementById("ownerBypassBtn");
+        const ownerStatus = document.getElementById("ownerStatus");
+
+        const bgMusic = document.getElementById("bgMusic");
+        const birthdayMusic = document.getElementById("birthdayMusic");
+        const securityMusic = document.getElementById("securityMusic");
+
+        function fmtMMSS(ms) {
+            const s = Math.max(0, Math.floor(ms / 1000));
+            const mm = String(Math.floor(s / 60)).padStart(2, "0");
+            const ss = String(s % 60).padStart(2, "0");
+            return `${mm}:${ss}`;
+        }
+
+        function getLockUntil() {
+            const v = localStorage.getItem("gate_lock_until");
+            return v ? Number(v) : 0;
+        }
+        function setLockUntil(ts) {
+            localStorage.setItem("gate_lock_until", String(ts));
+        }
+
+        function getAttemptsLeft() {
+            const v = localStorage.getItem("gate_attempts_left");
+            if (v === null) return MAX_ATTEMPTS;
+            const n = Number(v);
+            return Number.isFinite(n) ? n : MAX_ATTEMPTS;
+        }
+        function setAttemptsLeft(n) {
+            localStorage.setItem("gate_attempts_left", String(n));
+        }
+
+        function renderAttemptDots(left) {
+            attemptDots.innerHTML = "";
+            for (let i = 0; i < MAX_ATTEMPTS; i++) {
+                const d = document.createElement("span");
+                d.className = "dot" + (i < left ? " on" : "");
+                attemptDots.appendChild(d);
+            }
+        }
+
+        function updateAttemptUI() {
+            const left = getAttemptsLeft();
+            attemptCount.textContent = String(left);
+            renderAttemptDots(left);
+        }
+
+        function preClue() {
+            return "Clue: It’s a combo of you + me. Two parts. One code.";
+        }
+        function clueForFail(failCount) {
+            if (failCount === 1) {
+                return "Clue: A birthmark in time. A moving identity. Align them exactly as intended.";
+            }
+            if (failCount === 2) {
+                return "Clue: An unlosable date, paired with what carries me — wrapped in red";
+            }
+            return "Clue: A birthmark in time. A moving identity. Align them exactly as intended.";
+        }
+
+        let lockTick = null;
+
+        function hardStopMainMusic() {
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+        }
+
+        function tryPlaySecurityMusic() {
+            hardStopMainMusic();
+            securityMusic.volume = 1.0;
+            securityMusic.play().catch(() => { });
+        }
+
+        function gateOpen() {
+            securityMusic.pause();
+            securityMusic.currentTime = 0;
+
+            gate.style.display = "none";
+            card.style.display = "block";
+
+            bgMusic.play().catch(() => { });
+        }
+
+        function setGateLockedUI(isLocked) {
+            gateUnlockBtn.disabled = isLocked;
+            gateInput.disabled = isLocked;
+            lockNote.style.display = isLocked ? "block" : "none";
+
+            if (isLocked) {
+                hintPill.style.display = "none";
+
+                gateStatus.className = "gate-status bad";
+                gateStatus.textContent = "Locked. This system has standards.";
+                attemptCount.textContent = "0";
+                renderAttemptDots(0);
+
+                ownerKeyInput.disabled = false;
+                ownerBypassBtn.disabled = false;
+                ownerStatus.textContent = "";
+            } else {
+                hintPill.style.display = "inline-flex";
+                hintPill.textContent = preClue();
+
+                gateStatus.className = "gate-status dim";
+                gateStatus.textContent = "Proceed when ready. Precision only.";
+                updateAttemptUI();
+
+                ownerKeyInput.value = "";
+                ownerStatus.textContent = "";
+                ownerKeyInput.disabled = true;
+                ownerBypassBtn.disabled = true;
+            }
+        }
+
+        function resetLockState() {
+            setAttemptsLeft(MAX_ATTEMPTS);
+            setLockUntil(0);
+            if (lockTick) {
+                window.clearInterval(lockTick);
+                lockTick = null;
+            }
+            setGateLockedUI(false);
+        }
+
+        function startLockCountdown() {
+            const until = getLockUntil();
+            if (!until) return;
+
+            setGateLockedUI(true);
+
+            if (lockTick) window.clearInterval(lockTick);
+            lockTick = window.setInterval(() => {
+                const now = Date.now();
+                const left = until - now;
+                lockTimer.textContent = fmtMMSS(left);
+
+                if (left <= 0) {
+                    window.clearInterval(lockTick);
+                    lockTick = null;
+                    resetLockState();
+                    gateInput.value = "";
+                    hintPill.textContent = preClue();
+                    gateStatus.className = "gate-status dim";
+                    gateStatus.textContent = "Lock expired. Try again, Birthday Boy.";
+                }
+            }, 200);
+        }
+
+        function validateGate() {
+            const until = getLockUntil();
+            const now = Date.now();
+            if (until && now < until) {
+                setGateLockedUI(true);
+                startLockCountdown();
+                return;
+            }
+
+            const code = (gateInput.value || "").replace(/\s+/g, "");
+            if (!code) {
+                gateStatus.className = "gate-status dim";
+                gateStatus.textContent = "Enter the code first. Then we talk.";
+                return;
+            }
+
+            if (code === PASSWORD) {
+                gateStatus.className = "gate-status ok";
+                gateStatus.textContent = "Verified. Access granted.";
+                localStorage.removeItem("gate_attempts_left");
+                localStorage.removeItem("gate_lock_until");
+                gateOpen();
+                return;
+            }
+
+            let left = getAttemptsLeft();
+            left = Math.max(0, left - 1);
+            setAttemptsLeft(left);
+
+            gateInput.value = "";
+            updateAttemptUI();
+
+            const failCount = MAX_ATTEMPTS - left;
+            hintPill.style.display = "inline-flex";
+            hintPill.textContent = clueForFail(Math.min(failCount, 3));
+
+            gateStatus.className = "gate-status bad";
+            if (left > 0) {
+                gateStatus.textContent = "Denied. Again. With focus this time.";
+            } else {
+                gateStatus.textContent = "Denied. You have exhausted your privileges.";
+            }
+
+            if (left <= 0) {
+                const lockUntil = Date.now() + LOCK_MS;
+                setLockUntil(lockUntil);
+                setGateLockedUI(true);
+                startLockCountdown();
+            }
+        }
+
+        function ownerBypass() {
+            const key = (ownerKeyInput.value || "").replace(/\s+/g, "");
+            if (!key) {
+                ownerStatus.className = "gate-status dim";
+                ownerStatus.textContent = "Owner Key required for fast-track.";
+                return;
+            }
+            if (key === OWNER_KEY) {
+                ownerStatus.className = "gate-status ok";
+                ownerStatus.textContent = "Owner authenticated. Bypass approved.";
+                localStorage.removeItem("gate_attempts_left");
+                localStorage.removeItem("gate_lock_until");
+                gateOpen();
+                return;
+            }
+            ownerKeyInput.value = "";
+            ownerStatus.className = "gate-status bad";
+            ownerStatus.textContent = "Owner Key rejected. Kiss tax still pending.";
+        }
+
+        gateUnlockBtn.addEventListener("click", validateGate);
+        gateInput.addEventListener("keydown", (e) => { if (e.key === "Enter") validateGate(); });
+
+        ownerBypassBtn.addEventListener("click", ownerBypass);
+        ownerKeyInput.addEventListener("keydown", (e) => { if (e.key === "Enter") ownerBypass(); });
+
+        document.body.addEventListener("click", () => {
+            if (gate.style.display !== "none") tryPlaySecurityMusic();
+        }, { once: false });
+
+        (function initGate() {
+            card.style.display = "none";
+            gate.style.display = "grid";
+
+            updateAttemptUI();
+            hardStopMainMusic();
+
+            hintPill.style.display = "inline-flex";
+            hintPill.textContent = preClue();
+            gateStatus.textContent = "Start with the “you” part, then add the “me” part. Smooth and simple.";
+
+            const until = getLockUntil();
+            const now = Date.now();
+            if (until && now < until) {
+                setGateLockedUI(true);
+                startLockCountdown();
+            } else {
+                setGateLockedUI(false);
+            }
+
+            tryPlaySecurityMusic();
+        })();
+
+        // =========================
+        // ORIGINAL EXPERIENCE SCRIPT
+        // =========================
+
         const MESSAGES = [
-            { text: "The music is playing…...🎶" },
+            { text: "The music is playing." },
             { text: "Your favourite song. So this already feels like a movie scene." },
             { text: "Lights low. Screen glowing. And today’s main character?" },
-            { text: "You. ✨" },
+            { text: "You." },
 
             { text: "Hello, Birthday Boy.", gif: "hello.gif" },
 
             { text: "Before anything else - thank you for existing. You have no idea how much light you bring into my life." },
 
-            { text: "You show up for me in ways that feel quiet… but powerful." },
+            { text: "You show up for me in ways that feel quiet, but powerful." },
             { text: "In the small check-ins. In the steady comfort. In the way you never let me feel alone. You remember small things I casually mention." },
 
             { text: "And I need you to know - I see that. I value that. I cherish that." },
 
-            { text: "Even though I’ve only known you for a short time…" },
-            { text: "Ungalai paatha udane, en vaazhkai konjam maari pochu." },
+            { text: "Even though I’ve only known you for a short time..." },
+            { text: "Ungalai paatha udane, en vaazhkai maari pochu." },
 
             { text: "I know life hasn’t always been kind to you. I know you’ve carried hurt that wasn’t yours to carry. I know love hasn’t always felt safe." },
 
-            { text: "But listen to me carefully…" },
+            { text: "But listen to me carefully..." },
 
             { text: "You are not your past. You are not the pain someone else left behind. You are not hard to love. You are not difficult. You are not broken." },
 
@@ -951,22 +1541,19 @@
             { text: "And that is strength." },
 
             { text: "You deserve love that feels safe. Clear. Certain." },
-            { text: "And I hope, slowly… gently… I can help you believe that again." },
+            { text: "And I hope, slowly... gently... I can help you believe that again." },
 
-            { text: "Manchester United fan, right? So loyalty and resilience are already in your DNA. 🔴⚽" },
-            { text: "You’ve survived post-Fergie seasons. You can survive anything." },
+            { text: "Manchester United fan, right? So loyalty and resilience are already in your DNA." },
+            { text: "You’ve survived post-Fergie seasons. You can survive anything.", gif: "tongue-out.gif" },
 
-            { text: "If love had a league table, you’d be top every week. No VAR review required." },
+            { text: "If love and care had a league table, you’d be top every week. No VAR review required." },
 
-            { text: "Also… small complaint." },
-            { text: "Your smile? Illegal levels of handsome. Unfair advantage. 🤭" },
-            { text: "I demand more hugs as compensation.", gif: "proud.gif" },
+            { text: "Also... small complaint." },
+            { text: "Your smile? Your charming looks? Unfair advantage." },
+            { text: "I demand more hugs as compensation!!" },
 
             { text: "And this year?" },
             { text: "This is your comeback season. New energy. New blessings." },
-
-            { text: "Sometimes I look at you and think… yes." },
-            { text: "That’s my person." },
 
             { text: "Thank you for the care you give me. For the way you make me feel safe. For the way you make me feel wanted." },
 
@@ -975,37 +1562,37 @@
 
             { text: "I am proud of you - not just for what you achieve, but for who you are when no one is watching." },
 
-            { text: "I will be there for you. On loud days. On quiet days. On rainy days.", gif: "rainy-days.gif" },
+            { text: "I will be there for you. On loud days. On quiet days. On rainy days." },
 
             { text: "When the memories feel heavy. When the doubts creep in. When the world feels too much." },
 
-            { text: "No questions asked. Call me. I won’t try to fix everything. I’ll just sit with you." },
+            { text: "No questions asked. Call me. I won’t try to fix everything. I’ll just sit with you.", gif: "call.gif" },
 
-            { text: "This birthday is not just another candle." },
+            { text: "This birthday is not just another day." },
             { text: "It’s the beginning of something better." },
 
             { text: "A year where you heal deeper. A year where you laugh louder. A year where your wishes don’t just stay wishes." },
 
             { text: "I hope this year gives you peace in your mind, strength in your heart, and joy that lingers." },
 
-            { text: "And if ever you forget how loved you are…" },
+            { text: "And if ever you forget how loved you are..." },
 
             { text: "Replay this page. Replay the music. Replay us." },
 
-            { master: true },
-
-            { text: "Happy Birthday, Pratu!!!!!! 🎂🎉" },
+            { text: "Happy Birthday, Pratu." },
 
             { text: "You are loved. Fully. Properly. Clearly.", gif: "flying-kiss.gif" },
 
-            { text: "Now come collect your birthday hugs before I file a complaint." },
+            { master: true },
+
+            { text: "Now come collect your birthday hugs before I file a complaint.", gif: "proud.gif" },
 
             { final: true }
         ];
 
         let index = -1;
 
-        const card = document.getElementById("card");
+        const cardEl = document.getElementById("card");
         const title = document.getElementById("title");
 
         const standardArea = document.getElementById("standardArea");
@@ -1021,9 +1608,6 @@
         const muteIcon = document.getElementById("muteIcon");
         const muteText = document.getElementById("muteText");
 
-        const bgMusic = document.getElementById("bgMusic");
-        const birthdayMusic = document.getElementById("birthdayMusic");
-
         const giftBox = document.getElementById("giftBox");
         const giftBubble = document.getElementById("giftBubble");
         const revealText = document.getElementById("revealText");
@@ -1035,21 +1619,20 @@
         const messageGifWrap = document.getElementById("messageGifWrap");
         const messageGif = document.getElementById("messageGif");
 
-        // Autoplay fallback
         document.body.addEventListener("click", () => {
-            bgMusic.play().catch(() => { });
+            if (gate.style.display === "none") {
+                bgMusic.play().catch(() => { });
+            }
         }, { once: false });
 
-        // Transitions
         const transitionClasses = ["t-pop", "t-swing", "t-glow", "t-slide"];
         function applyTransition(i) {
-            transitionClasses.forEach(c => card.classList.remove(c));
+            transitionClasses.forEach(c => cardEl.classList.remove(c));
             const cls = transitionClasses[i % transitionClasses.length];
-            void card.offsetWidth;
-            card.classList.add(cls);
+            void cardEl.offsetWidth;
+            cardEl.classList.add(cls);
         }
 
-        // Audio fade
         let fadeTimer = null;
         function fadeVolume(audioEl, to, ms) {
             if (!audioEl) return;
@@ -1088,10 +1671,9 @@
 
             document.querySelectorAll(".flame").forEach(f => f.classList.remove("off"));
 
-            card.classList.remove("master-slide", "final-slide");
+            cardEl.classList.remove("master-slide", "final-slide");
             giftOpened = false;
 
-            // reset gif
             messageGifWrap.classList.remove("show");
             messageGif.removeAttribute("src");
 
@@ -1106,20 +1688,19 @@
             title.textContent = "You, Always.";
 
             if (item.master) {
-                card.classList.add("master-slide");
+                cardEl.classList.add("master-slide");
                 title.textContent = "Happy Birthday, Pratu";
 
                 standardArea.style.display = "none";
                 masterArea.style.display = "block";
                 giftBubble.style.display = "inline-block";
 
-                // No Next until gift is clicked
                 nextBtn.style.display = "none";
                 return;
             }
 
             if (item.final) {
-                card.classList.add("final-slide");
+                cardEl.classList.add("final-slide");
                 title.textContent = " ";
 
                 standardArea.style.display = "none";
@@ -1130,7 +1711,6 @@
 
             msgEl.textContent = item.text;
 
-            // show gif for specific messages
             if (item.gif) {
                 messageGif.src = item.gif;
                 messageGifWrap.classList.add("show");
@@ -1146,7 +1726,6 @@
             if (nextIsFinal) nextBtn.textContent = "Finish";
         }
 
-        // Master gift open
         giftBox.addEventListener("click", () => {
             if (giftOpened) return;
             giftOpened = true;
@@ -1168,20 +1747,19 @@
             nextBtn.textContent = "Next";
         });
 
-        // Blow candles
         document.addEventListener("click", (e) => {
             const flame = (e.target && e.target.classList && e.target.classList.contains("flame")) ? e.target : null;
             if (!flame) return;
 
             flame.classList.add("off");
-            const allOff = Array.from(document.querySelectorAll("#candles .flame")).every(f => f.classList.contains("off"));
+            const allOff = Array.from(document.querySelectorAll("#candles .flame"))
+                .every(f => f.classList.contains("off"));
             if (allOff) {
                 burstConfetti(200);
                 blowHint.textContent = "Make a wish. I am making one too.";
             }
         });
 
-        // Buttons
         startBtn.addEventListener("click", () => {
             index = 0;
             showMessage(index);
