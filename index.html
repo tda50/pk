@@ -43,7 +43,7 @@
             align-items: center;
             justify-content: center;
 
-            /* iOS alignment/keyboard-friendly defaults */
+            /* iOS-friendly page behavior */
             overflow-x: hidden;
             overflow-y: auto;
             padding:
@@ -117,6 +117,9 @@
             z-index: 6;
         }
 
+        /* =========================
+       CARD CONTAINER (AUTO-FIT)
+       ========================= */
         .container {
             width: min(92%, 720px);
             background: rgba(255, 255, 255, 0.96);
@@ -128,9 +131,9 @@
             z-index: 5;
             backdrop-filter: blur(8px);
             transform-origin: center;
-            overflow: hidden;
 
-            /* Mobile: keep the card aligned and scrollable within the viewport */
+            /* Keep within viewport on iOS/Android */
+            overflow: hidden;
             max-height: calc(100svh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
         }
 
@@ -138,13 +141,6 @@
             .container {
                 max-height: calc(100dvh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
             }
-        }
-
-        /* Allow vertical scroll inside the card when content grows on iOS */
-        .container {
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
         }
 
         .t-pop {
@@ -257,7 +253,7 @@
             opacity: .28;
         }
 
-        /* Fix: avoid transform overrides that can misalign on mobile */
+        /* Balloon deco: mobile-safe scaling (avoid transform overrides) */
         .b {
             --s: 1;
             position: absolute;
@@ -375,7 +371,6 @@
             flex-wrap: wrap;
             position: relative;
             z-index: 2;
-            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .btn {
@@ -392,8 +387,9 @@
             align-items: center;
             gap: 10px;
             user-select: none;
+
+            /* touch ergonomics */
             min-height: 44px;
-            /* iOS tap target */
             touch-action: manipulation;
         }
 
@@ -446,7 +442,6 @@
             place-items: center;
             border-radius: 999px;
             background: rgba(255, 255, 255, 0.22);
-            flex: 0 0 auto;
         }
 
         .master-slide {
@@ -460,8 +455,7 @@
             content: "";
             position: absolute;
             inset: -2px;
-            background:
-                radial-gradient(1000px 420px at 20% 10%, rgba(231, 196, 106, 0.24), transparent 60%),
+            background: radial-gradient(1000px 420px at 20% 10%, rgba(231, 196, 106, 0.24), transparent 60%),
                 radial-gradient(900px 380px at 85% 85%, rgba(246, 233, 235, 0.16), transparent 60%);
             pointer-events: none;
         }
@@ -724,18 +718,19 @@
             z-index: 50;
             display: grid;
             place-items: center;
+
+            /* iOS keyboard friendly: overlay can scroll */
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+
             padding:
                 calc(18px + env(safe-area-inset-top)) calc(18px + env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) calc(18px + env(safe-area-inset-left));
+
             background:
                 radial-gradient(900px 380px at 20% 10%, rgba(231, 196, 106, 0.18), transparent 60%),
                 radial-gradient(900px 380px at 85% 85%, rgba(246, 233, 235, 0.18), transparent 60%),
                 linear-gradient(135deg, rgba(15, 27, 45, 0.92), rgba(27, 47, 82, 0.92));
             backdrop-filter: blur(10px);
-
-            /* iOS keyboard: allow overlay to scroll instead of cropping */
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
         }
 
         .gate-card {
@@ -746,11 +741,12 @@
             box-shadow: 0 30px 90px rgba(0, 0, 0, 0.35);
             border: 1px solid rgba(255, 255, 255, 0.35);
             position: relative;
-            overflow: hidden;
 
+            /* Security screen auto-fit */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
             max-height: calc(100svh - 36px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         @supports (height: 100dvh) {
@@ -812,6 +808,12 @@
             position: relative;
             z-index: 1;
             justify-items: center;
+
+            /* Security form scrolls when keyboard reduces height */
+            flex: 1 1 auto;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 10px;
         }
 
         .gate-input {
@@ -820,8 +822,10 @@
             border-radius: 14px;
             border: 1px solid rgba(27, 47, 82, 0.18);
             outline: none;
+
+            /* Prevent iOS zoom */
             font-size: 16px;
-            /* prevents iOS zoom */
+
             background: rgba(255, 255, 255, 0.98);
             box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
             text-align: center;
@@ -920,7 +924,18 @@
             gap: 10px;
             flex-wrap: wrap;
             position: relative;
-            z-index: 1;
+            z-index: 2;
+
+            /* Keep Unlock reachable */
+            position: sticky;
+            bottom: 0;
+            padding-top: 10px;
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
+            background: linear-gradient(180deg,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.88) 40%,
+                    rgba(255, 255, 255, 0.98) 100%);
+            border-top: 1px solid rgba(27, 47, 82, 0.10);
         }
 
         .btn-wide {
@@ -945,6 +960,71 @@
             color: rgba(27, 47, 82, 0.90);
         }
 
+        /* =========================
+       MASTER SLIDE: CTA ALWAYS VISIBLE
+       ========================= */
+        .container.master-slide {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding-bottom: 14px;
+        }
+
+        .container.master-slide #masterArea {
+            display: block !important;
+            flex: 1 1 auto;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 10px;
+        }
+
+        .container.master-slide #controlsBar {
+            flex: 0 0 auto;
+            position: sticky;
+            bottom: 0;
+            z-index: 5;
+            margin-top: 12px;
+            padding-top: 10px;
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
+            background: linear-gradient(180deg,
+                    rgba(15, 27, 45, 0) 0%,
+                    rgba(15, 27, 45, 0.55) 40%,
+                    rgba(15, 27, 45, 0.78) 100%);
+            border-top: 1px solid rgba(255, 255, 255, 0.10);
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+        }
+
+        .container.master-slide .gift-area {
+            gap: 12px;
+        }
+
+        .container.master-slide .gift-box {
+            width: clamp(110px, 28vw, 150px);
+        }
+
+        .container.master-slide .his-photo-wrap {
+            width: clamp(190px, 52vw, 260px);
+            height: clamp(220px, 58vw, 300px);
+        }
+
+        .container.master-slide .his-photo {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container.master-slide h1 {
+            font-size: clamp(34px, 8.5vw, 52px);
+        }
+
+        .container.master-slide .master-sub {
+            font-size: clamp(11px, 2.8vw, 14px);
+            letter-spacing: clamp(1.2px, 0.4vw, 2px);
+        }
+
+        /* =========================
+       RESPONSIVE TUNING
+       ========================= */
         @media (max-width: 480px) {
             .container {
                 padding: 30px 18px;
@@ -955,7 +1035,7 @@
             }
 
             .master-slide h1 {
-                font-size: 44px;
+                font-size: clamp(34px, 9vw, 44px);
             }
 
             .message {
@@ -985,58 +1065,32 @@
             }
         }
 
-        @media (max-width: 480px) {
-            .container.master-slide {
-                height: 92svh;
-                overflow: hidden;
-                display: flex;
-                flex-direction: column;
-                padding-bottom: calc(16px + env(safe-area-inset-bottom));
+        @media (prefers-reduced-motion: reduce) {
+            .dust {
+                animation: none;
             }
 
-            @supports (height: 100dvh) {
-                .container.master-slide {
-                    height: 92dvh;
-                }
+            .t-pop,
+            .t-swing,
+            .t-glow,
+            .t-slide {
+                animation: none;
             }
 
-            .container.master-slide #masterArea {
-                flex: 1 1 auto;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-                padding-bottom: 10px;
+            .b {
+                animation: none;
             }
 
-            .container.master-slide .controls {
-                flex: 0 0 auto;
-                position: relative;
-                margin-top: 12px;
-                padding-bottom: env(safe-area-inset-bottom);
-                background: transparent;
+            .flame {
+                animation: none;
             }
 
-            .container.master-slide .gift-area {
-                gap: 10px;
+            .bubble {
+                animation: none;
             }
 
-            .container.master-slide .gift-box {
-                width: 120px;
-            }
-
-            .container.master-slide .his-photo-wrap {
-                width: 200px;
-                height: 230px;
-            }
-
-            .container.master-slide .his-photo {
-                width: 200px;
-                height: 230px;
-            }
-
-            .container.master-slide .master-sub {
-                margin-top: 2px;
-                font-size: 12px;
-                letter-spacing: 1.6px;
+            .sparkle-ring {
+                animation: none;
             }
         }
     </style>
@@ -1477,13 +1531,19 @@
         }
 
         gateUnlockBtn.addEventListener("click", validateGate);
-        gateInput.addEventListener("keydown", (e) => { if (e.key === "Enter") validateGate(); });
+        gateInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") validateGate();
+        });
 
         ownerBypassBtn.addEventListener("click", ownerBypass);
-        ownerKeyInput.addEventListener("keydown", (e) => { if (e.key === "Enter") ownerBypass(); });
+        ownerKeyInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") ownerBypass();
+        });
 
         document.body.addEventListener("click", () => {
-            if (gate.style.display !== "none") tryPlaySecurityMusic();
+            if (gate.style.display !== "none") {
+                tryPlaySecurityMusic();
+            }
         }, { once: false });
 
         (function initGate() {
@@ -1529,7 +1589,7 @@
             { text: "And I need you to know - I see that. I value that. I cherish that." },
 
             { text: "Even though I’ve only known you for a short time..." },
-            { text: "Ungalai paatha udane, en vaazhkai maari pochu." },
+            { text: "Ungalai paatha udane, en vaazhkai konjam maari pochu." },
 
             { text: "I know life hasn’t always been kind to you. I know you’ve carried hurt that wasn’t yours to carry. I know love hasn’t always felt safe." },
 
@@ -1544,16 +1604,19 @@
             { text: "And I hope, slowly... gently... I can help you believe that again." },
 
             { text: "Manchester United fan, right? So loyalty and resilience are already in your DNA." },
-            { text: "You’ve survived post-Fergie seasons. You can survive anything.", gif: "tongue-out.gif" },
+            { text: "You’ve survived post-Fergie seasons. You can survive anything." },
 
-            { text: "If love and care had a league table, you’d be top every week. No VAR review required." },
+            { text: "If love had a league table, you’d be top every week. No VAR review required." },
 
             { text: "Also... small complaint." },
-            { text: "Your smile? Your charming looks? Unfair advantage." },
-            { text: "I demand more hugs as compensation!!" },
+            { text: "Your smile? Unfair advantage." },
+            { text: "I demand more hugs as compensation.", gif: "proud.gif" },
 
             { text: "And this year?" },
             { text: "This is your comeback season. New energy. New blessings." },
+
+            { text: "Sometimes I look at you and think... yes." },
+            { text: "That’s my person." },
 
             { text: "Thank you for the care you give me. For the way you make me feel safe. For the way you make me feel wanted." },
 
@@ -1562,13 +1625,13 @@
 
             { text: "I am proud of you - not just for what you achieve, but for who you are when no one is watching." },
 
-            { text: "I will be there for you. On loud days. On quiet days. On rainy days." },
+            { text: "I will be there for you. On loud days. On quiet days. On rainy days.", gif: "rainy-days.gif" },
 
             { text: "When the memories feel heavy. When the doubts creep in. When the world feels too much." },
 
-            { text: "No questions asked. Call me. I won’t try to fix everything. I’ll just sit with you.", gif: "call.gif" },
+            { text: "No questions asked. Call me. I won’t try to fix everything. I’ll just sit with you." },
 
-            { text: "This birthday is not just another day." },
+            { text: "This birthday is not just another candle." },
             { text: "It’s the beginning of something better." },
 
             { text: "A year where you heal deeper. A year where you laugh louder. A year where your wishes don’t just stay wishes." },
@@ -1579,13 +1642,13 @@
 
             { text: "Replay this page. Replay the music. Replay us." },
 
+            { master: true },
+
             { text: "Happy Birthday, Pratu." },
 
             { text: "You are loved. Fully. Properly. Clearly.", gif: "flying-kiss.gif" },
 
-            { master: true },
-
-            { text: "Now come collect your birthday hugs before I file a complaint.", gif: "proud.gif" },
+            { text: "Now come collect your birthday hugs before I file a complaint." },
 
             { final: true }
         ];
