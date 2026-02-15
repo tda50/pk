@@ -25,6 +25,9 @@
             --black: #121212;
             --danger: #b42318;
             --ok: #027a48;
+
+            /* master slide reserved space for sticky controls (tuned for iOS) */
+            --master-cta-pad: 120px;
         }
 
         html {
@@ -42,8 +45,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-
-            /* iOS-friendly page behavior */
             overflow-x: hidden;
             overflow-y: auto;
             padding:
@@ -131,8 +132,6 @@
             z-index: 5;
             backdrop-filter: blur(8px);
             transform-origin: center;
-
-            /* Keep within viewport on iOS/Android */
             overflow: hidden;
             max-height: calc(100svh - 28px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
         }
@@ -253,7 +252,6 @@
             opacity: .28;
         }
 
-        /* Balloon deco: mobile-safe scaling (avoid transform overrides) */
         .b {
             --s: 1;
             position: absolute;
@@ -387,8 +385,6 @@
             align-items: center;
             gap: 10px;
             user-select: none;
-
-            /* touch ergonomics */
             min-height: 44px;
             touch-action: manipulation;
         }
@@ -718,14 +714,10 @@
             z-index: 50;
             display: grid;
             place-items: center;
-
-            /* iOS keyboard friendly: overlay can scroll */
             overflow: auto;
             -webkit-overflow-scrolling: touch;
-
             padding:
                 calc(18px + env(safe-area-inset-top)) calc(18px + env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) calc(18px + env(safe-area-inset-left));
-
             background:
                 radial-gradient(900px 380px at 20% 10%, rgba(231, 196, 106, 0.18), transparent 60%),
                 radial-gradient(900px 380px at 85% 85%, rgba(246, 233, 235, 0.18), transparent 60%),
@@ -736,13 +728,11 @@
         .gate-card {
             width: min(92vw, 560px);
             border-radius: 26px;
-            padding: 26px 18px 22px;
+            padding: 22px 18px 18px;
             background: rgba(255, 255, 255, 0.95);
             box-shadow: 0 30px 90px rgba(0, 0, 0, 0.35);
             border: 1px solid rgba(255, 255, 255, 0.35);
             position: relative;
-
-            /* Security screen auto-fit */
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -785,7 +775,7 @@
         }
 
         .gate-media {
-            margin-top: 14px;
+            margin-top: 10px;
             display: grid;
             gap: 10px;
             justify-items: center;
@@ -793,23 +783,30 @@
             z-index: 1;
         }
 
+        /* SECURITY: reduce GIF footprint without removing it */
         .gate-media img {
-            width: min(420px, 100%);
-            border-radius: 18px;
+            width: min(360px, 100%);
+            max-height: clamp(120px, 22svh, 190px);
+            object-fit: cover;
+            border-radius: 16px;
             border: 1px solid rgba(182, 139, 58, 0.20);
             box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
             background: rgba(255, 255, 255, 0.6);
         }
 
+        @supports (height: 100dvh) {
+            .gate-media img {
+                max-height: clamp(120px, 22dvh, 190px);
+            }
+        }
+
         .gate-form {
-            margin-top: 14px;
+            margin-top: 12px;
             display: grid;
             gap: 10px;
             position: relative;
             z-index: 1;
             justify-items: center;
-
-            /* Security form scrolls when keyboard reduces height */
             flex: 1 1 auto;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
@@ -822,10 +819,8 @@
             border-radius: 14px;
             border: 1px solid rgba(27, 47, 82, 0.18);
             outline: none;
-
-            /* Prevent iOS zoom */
             font-size: 16px;
-
+            /* prevents iOS zoom */
             background: rgba(255, 255, 255, 0.98);
             box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
             text-align: center;
@@ -923,10 +918,7 @@
             justify-content: center;
             gap: 10px;
             flex-wrap: wrap;
-            position: relative;
             z-index: 2;
-
-            /* Keep Unlock reachable */
             position: sticky;
             bottom: 0;
             padding-top: 10px;
@@ -961,21 +953,22 @@
         }
 
         /* =========================
-       MASTER SLIDE: CTA ALWAYS VISIBLE
+       MASTER SLIDE: CTA ALWAYS VISIBLE + ELEMENTS MOVE UP
        ========================= */
         .container.master-slide {
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            padding-bottom: 14px;
+            padding-bottom: 12px;
         }
 
+        /* master content scrolls and reserves space so CTA does not block */
         .container.master-slide #masterArea {
             display: block !important;
             flex: 1 1 auto;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 10px;
+            padding-bottom: var(--master-cta-pad);
         }
 
         .container.master-slide #controlsBar {
@@ -983,7 +976,7 @@
             position: sticky;
             bottom: 0;
             z-index: 5;
-            margin-top: 12px;
+            margin-top: 10px;
             padding-top: 10px;
             padding-bottom: calc(10px + env(safe-area-inset-bottom));
             background: linear-gradient(180deg,
@@ -995,17 +988,31 @@
             border-bottom-right-radius: 24px;
         }
 
+        /* Requested: gift image slightly up */
         .container.master-slide .gift-area {
-            gap: 12px;
+            gap: 10px;
+            margin-top: 10px;
         }
 
         .container.master-slide .gift-box {
-            width: clamp(110px, 28vw, 150px);
+            width: clamp(105px, 26vw, 140px);
+            margin-top: -6px;
         }
 
+        /* Requested: candles smaller */
+        .container.master-slide .candles {
+            gap: 8px;
+            max-width: 300px;
+            transform: scale(0.88);
+            transform-origin: top center;
+            margin-top: -4px;
+        }
+
+        /* Requested: resize photo and move up (avoid CTA overlap) */
         .container.master-slide .his-photo-wrap {
-            width: clamp(190px, 52vw, 260px);
-            height: clamp(220px, 58vw, 300px);
+            width: clamp(170px, 48vw, 230px);
+            height: clamp(200px, 54vw, 260px);
+            margin-top: -2px;
         }
 
         .container.master-slide .his-photo {
@@ -1018,6 +1025,7 @@
         }
 
         .container.master-slide .master-sub {
+            margin-top: 4px;
             font-size: clamp(11px, 2.8vw, 14px);
             letter-spacing: clamp(1.2px, 0.4vw, 2px);
         }
@@ -1026,8 +1034,12 @@
        RESPONSIVE TUNING
        ========================= */
         @media (max-width: 480px) {
+            :root {
+                --master-cta-pad: 132px;
+            }
+
             .container {
-                padding: 30px 18px;
+                padding: 28px 16px;
             }
 
             h1 {
@@ -1042,26 +1054,22 @@
                 font-size: 16px;
             }
 
-            .gift-box {
-                width: 132px;
-            }
-
-            .his-photo-wrap {
-                width: 230px;
-                height: 270px;
-            }
-
-            .his-photo {
-                width: 230px;
-                height: 270px;
-            }
-
             .message-wrap {
                 padding: 16px 14px;
             }
 
             .message-gif {
                 border-radius: 16px;
+            }
+
+            /* Security: slightly tighter for small phones */
+            .gate-card {
+                padding: 20px 16px 16px;
+            }
+
+            .gate-media img {
+                width: min(330px, 100%);
+                max-height: clamp(110px, 20svh, 170px);
             }
         }
 
