@@ -26,7 +26,6 @@
             --danger: #b42318;
             --ok: #027a48;
 
-            /* master slide reserved space for sticky controls (tuned for iOS) */
             --master-cta-pad: 120px;
         }
 
@@ -118,9 +117,6 @@
             z-index: 6;
         }
 
-        /* =========================
-       CARD CONTAINER (AUTO-FIT)
-       ========================= */
         .container {
             width: min(92%, 720px);
             background: rgba(255, 255, 255, 0.96);
@@ -461,19 +457,15 @@
             font-size: 52px;
         }
 
+        /* REMOVED subtitle by hiding it (kept content in HTML but not rendered) */
         .master-sub {
-            margin-top: 6px;
-            font-family: Playfair Display, serif;
-            font-size: 14px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            opacity: .85;
+            display: none;
         }
 
         .gift-area {
-            margin-top: 18px;
+            margin-top: 12px;
             display: grid;
-            gap: 14px;
+            gap: 12px;
             justify-items: center;
             position: relative;
             z-index: 2;
@@ -530,7 +522,7 @@
 
         .reveal {
             display: none;
-            margin-top: 6px;
+            margin-top: 4px;
             font-size: 20px;
             font-weight: 700;
             line-height: 1.5;
@@ -543,12 +535,16 @@
 
         .candles {
             display: none;
-            margin-top: 2px;
+            margin-top: 6px;
+            /* moved down from overlapping gift */
             justify-content: center;
             gap: 10px;
             align-items: flex-end;
             flex-wrap: wrap;
             max-width: 340px;
+            position: relative;
+            z-index: 3;
+            /* ensure flames are tappable */
         }
 
         .candles.show {
@@ -594,6 +590,7 @@
             border-radius: 50%;
             filter: drop-shadow(0 0 12px rgba(255, 209, 102, 0.65));
             animation: flicker 0.12s infinite alternate;
+            pointer-events: auto;
         }
 
         .candle.small .flame {
@@ -633,7 +630,7 @@
 
         .his-photo-wrap {
             display: none;
-            margin-top: 10px;
+            margin-top: 8px;
             position: relative;
             width: 260px;
             height: 300px;
@@ -774,30 +771,26 @@
             z-index: 1;
         }
 
+        /* Make GIF a small square and auto-fit */
         .gate-media {
             margin-top: 10px;
             display: grid;
-            gap: 10px;
             justify-items: center;
             position: relative;
             z-index: 1;
         }
 
-        /* SECURITY: reduce GIF footprint without removing it */
         .gate-media img {
-            width: min(360px, 100%);
-            max-height: clamp(120px, 22svh, 190px);
+            width: 140px;
+            height: 140px;
             object-fit: cover;
-            border-radius: 16px;
+            /* fills the square */
+            object-position: center;
+            /* centered crop */
+            border-radius: 18px;
             border: 1px solid rgba(182, 139, 58, 0.20);
             box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
             background: rgba(255, 255, 255, 0.6);
-        }
-
-        @supports (height: 100dvh) {
-            .gate-media img {
-                max-height: clamp(120px, 22dvh, 190px);
-            }
         }
 
         .gate-form {
@@ -953,7 +946,7 @@
         }
 
         /* =========================
-       MASTER SLIDE: CTA ALWAYS VISIBLE + ELEMENTS MOVE UP
+       MASTER SLIDE: CTA VISIBLE
        ========================= */
         .container.master-slide {
             display: flex;
@@ -962,7 +955,6 @@
             padding-bottom: 12px;
         }
 
-        /* master content scrolls and reserves space so CTA does not block */
         .container.master-slide #masterArea {
             display: block !important;
             flex: 1 1 auto;
@@ -988,31 +980,34 @@
             border-bottom-right-radius: 24px;
         }
 
-        /* Requested: gift image slightly up */
         .container.master-slide .gift-area {
-            gap: 10px;
+            gap: 12px;
             margin-top: 10px;
         }
 
         .container.master-slide .gift-box {
             width: clamp(105px, 26vw, 140px);
             margin-top: -6px;
+            position: relative;
+            z-index: 2;
         }
 
-        /* Requested: candles smaller */
+        /* Move candles down so flames don't overlap gift */
         .container.master-slide .candles {
             gap: 8px;
             max-width: 300px;
             transform: scale(0.88);
             transform-origin: top center;
-            margin-top: -4px;
+            margin-top: 10px;
+            /* pushed down */
+            position: relative;
+            z-index: 4;
         }
 
-        /* Requested: resize photo and move up (avoid CTA overlap) */
         .container.master-slide .his-photo-wrap {
             width: clamp(170px, 48vw, 230px);
             height: clamp(200px, 54vw, 260px);
-            margin-top: -2px;
+            margin-top: 6px;
         }
 
         .container.master-slide .his-photo {
@@ -1024,15 +1019,6 @@
             font-size: clamp(34px, 8.5vw, 52px);
         }
 
-        .container.master-slide .master-sub {
-            margin-top: 4px;
-            font-size: clamp(11px, 2.8vw, 14px);
-            letter-spacing: clamp(1.2px, 0.4vw, 2px);
-        }
-
-        /* =========================
-       RESPONSIVE TUNING
-       ========================= */
         @media (max-width: 480px) {
             :root {
                 --master-cta-pad: 132px;
@@ -1044,10 +1030,6 @@
 
             h1 {
                 font-size: 38px;
-            }
-
-            .master-slide h1 {
-                font-size: clamp(34px, 9vw, 44px);
             }
 
             .message {
@@ -1062,14 +1044,13 @@
                 border-radius: 16px;
             }
 
-            /* Security: slightly tighter for small phones */
             .gate-card {
                 padding: 20px 16px 16px;
             }
 
             .gate-media img {
-                width: min(330px, 100%);
-                max-height: clamp(110px, 20svh, 170px);
+                width: 128px;
+                height: 128px;
             }
         }
 
