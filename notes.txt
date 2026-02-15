@@ -1,0 +1,15 @@
+4) Customize content (where to edit)
+
+In the code, you will see:
+
+const MESSAGES_SWEET_CHEEKY = [...]
+
+const MESSAGES_INTENSE_ROMANTIC = [...]
+
+const MESSAGES_SOFT_WHOLESOME = [...]
+
+To switch vibe, change this one line:
+
+const ACTIVE_MESSAGES = MESSAGES_SWEET_CHEEKY;
+const ACTIVE_MESSAGES = MESSAGES_INTENSE_ROMANTIC;
+const ACTIVE_MESSAGES = MESSAGES_SOFT_WHOLESOME;
