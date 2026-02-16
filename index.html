@@ -1117,9 +1117,9 @@
     <!-- PASSWORD GATE (SINGLE IMAGE) -->
     <div class="gate" id="gate">
         <div class="gate-card t-pop">
-            <h2 class="gate-title">Security Credentials Required</h2>
+            <h2 class="gate-title">Konjam Verification Venum</h2>
             <p class="gate-sub">
-                Authorized user: Birthday Boy. Enter the code to access the experience.
+                Reserved for Birthday Boy. Enter the code to continue.
             </p>
 
             <div class="gate-media">
@@ -1128,8 +1128,8 @@
 
             <div class="gate-form">
                 <input class="gate-input" id="gateInput" type="password" inputmode="numeric"
-                    placeholder="Enter code (numbers only)" autocomplete="off" />
-                <div class="helptext" id="gateHelp">Help: It is 8 digits.</div>
+                    placeholder="Type the code here" autocomplete="off" />
+                <div class="helptext" id="gateHelp">Help: 8 digits thaan. Simple.</div>
 
                 <div class="gate-meta">
                     <div class="pill" id="attemptPill">
@@ -1151,15 +1151,15 @@
                 </div>
 
                 <div class="mini-note" id="lockNote" style="display:none;">
-                    Locked for <span class="lock-timer" id="lockTimer">01:00</span>.
+                    Locked for <span class="lock-timer" id="lockTimer">04:00</span>.
                     <br />
-                    Fast-track available: “kiss tax” + Owner Key.
+                    System override available. Payment accepted in kisses.
                     <div style="margin-top:10px; display:grid; gap:10px; justify-items:center;">
                         <input class="gate-input" id="ownerKeyInput" type="password" inputmode="numeric"
-                            placeholder="Owner Key" autocomplete="off" style="max-width:280px;" />
+                            placeholder="Secret Code" autocomplete="off" style="max-width:280px;" />
                         <button class="btn btn-primary btn-wide" id="ownerBypassBtn">
                             <span class="btn-icon">💋</span>
-                            Pay Kiss Tax + Bypass
+                            Payment Made..Access Granted
                         </button>
                         <div class="gate-status dim" id="ownerStatus" style="min-height:18px;"></div>
                     </div>
@@ -1183,7 +1183,7 @@
     </audio>
 
     <div class="container t-pop" id="card" style="display:none;">
-        <h1 id="title">Unnodu Naan</h1>
+        <h1 id="title">உன்னோடு நான்</h1>
 
         <div id="standardArea">
             <div class="message-wrap" id="msgWrap">
@@ -1302,7 +1302,7 @@
         const OWNER_KEY = "5005";
 
         const MAX_ATTEMPTS = 3;
-        const LOCK_MS = 1 * 60 * 1000;
+        const LOCK_MS = 4 * 60 * 1000;
 
         const gate = document.getElementById("gate");
         const card = document.getElementById("card");
@@ -1375,7 +1375,7 @@
                 return "Clue: A birthmark in time. A moving identity. Align them exactly as intended.";
             }
             if (failCount === 2) {
-                return "Clue: An unlosable date, paired with what carries me — wrapped in red";
+                return "Clue: An unlosable date, paired with what carries me";
             }
             return "Clue: A birthmark in time. A moving identity. Align them exactly as intended.";
         }
@@ -1412,7 +1412,7 @@
                 hintPill.style.display = "none";
 
                 gateStatus.className = "gate-status bad";
-                gateStatus.textContent = "Locked. This system has standards.";
+                gateStatus.textContent = "Locked. 4 nimisham wait… illa payment-la settle pannalam.";
                 attemptCount.textContent = "0";
                 renderAttemptDots(0);
 
@@ -1424,7 +1424,7 @@
                 hintPill.textContent = preClue();
 
                 gateStatus.className = "gate-status dim";
-                gateStatus.textContent = "Proceed when ready. Precision only.";
+                gateStatus.textContent = "Calm-ah. Correct-ah type pannunga.";
                 updateAttemptUI();
 
                 ownerKeyInput.value = "";
@@ -1506,7 +1506,7 @@
 
             gateStatus.className = "gate-status bad";
             if (left > 0) {
-                gateStatus.textContent = "Denied. Again. With focus this time.";
+                gateStatus.textContent = "Denied. Manasu correct. Code thaan thappu.";
             } else {
                 gateStatus.textContent = "Denied. You have exhausted your privileges.";
             }
@@ -1583,10 +1583,9 @@
         // =========================
 
         const MESSAGES = [
-            { text: "The music is playing." },
-            { text: "Your favourite song. So this already feels like a movie scene." },
+            { text: "The music is playing....Your favourite song. So this already feels like a movie scene." },
             { text: "Lights low. Screen glowing. And today’s main character?" },
-            { text: "You." },
+            { text: "You.", gif: "pointing.gif" },
 
             { text: "Hello, Birthday Boy.", gif: "hello.gif" },
 
@@ -1595,14 +1594,14 @@
             { text: "You show up for me in ways that feel quiet, but powerful." },
             { text: "In the small check-ins. In the steady comfort. In the way you never let me feel alone. You remember small things I casually mention." },
 
-            { text: "And I need you to know - I see that. I value that. I cherish that." },
+            { text: "And I need you to know - I see that. I value that. I cherish that.", gif: "heart.gif" },
 
             { text: "Even though I’ve only known you for a short time..." },
             { text: "Ungalai paatha udane, en vaazhkai maari pochu." },
 
             { text: "I know life hasn’t always been kind to you. I know you’ve carried hurt that wasn’t yours to carry. I know love hasn’t always felt safe." },
 
-            { text: "But listen to me carefully..." },
+            { text: "But listen to me carefully...", gif: "listen.gif" },
 
             { text: "You are not your past. You are not the pain someone else left behind. You are not hard to love. You are not difficult. You are not broken." },
 
@@ -1613,7 +1612,7 @@
             { text: "And I hope, slowly... gently... I can help you believe that again." },
 
             { text: "Manchester United fan, right? So loyalty and resilience are already in your DNA." },
-            { text: "You’ve survived post-Fergie seasons. You can survive anything." },
+            { text: "You’ve survived post-Fergie seasons. You can survive anything.", gif: "wink.gif" },
 
             { text: "If love had a league table, you’d be top every week. No VAR review required." },
 
@@ -1624,10 +1623,9 @@
             { text: "And this year?" },
             { text: "This is your comeback season. New energy. New blessings." },
 
-            { text: "Thank you for the care you give me. For the way you make me feel safe. For the way you make me feel wanted." },
+            { text: "Thank you for the care you give me. For the way you make me feel safe. For the way you make me feel wanted.", gif: "thank-you.gif" },
 
-            { text: "That combination?" },
-            { text: "Rare. Precious. Powerful." },
+            { text: "That combination? Its - Rare. Precious. Powerful. " },
 
             { text: "I am proud of you - not just for what you achieve, but for who you are when no one is watching." },
 
@@ -1642,19 +1640,17 @@
 
             { text: "A year where you heal deeper. A year where you laugh louder. A year where your wishes don’t just stay wishes." },
 
-            { text: "I hope this year gives you peace in your mind, strength in your heart, and joy that lingers." },
+            { text: "I hope this year gives you peace in your mind, strength in your heart, and joy that lingers", gif: "happy.gif" },
 
             { text: "And if ever you forget how loved you are..." },
 
             { text: "Replay this page. Replay the music. Replay us." },
 
-            { text: "Happy Birthday, Pratu!!!!" },
-
             { text: "You are cared and loved. Fully. Properly. Clearly.", gif: "flying-kiss.gif" },
 
             { master: true },
 
-            { text: "Now come collect your birthday hugs before I file a complaint." },
+            { text: "Now come collect your birthday hugs before I file a complaint.", gif: "hugs.gif" },
 
             { final: true }
         ];
